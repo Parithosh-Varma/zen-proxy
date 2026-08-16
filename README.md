@@ -31,8 +31,6 @@ No API key is required for the free tier (`ZEN_KEY` defaults to `"public"`). Eac
 - **Node.js** – 18+ required to run `proxy.js`. (Tested on Node 20.)
 - **zen-claude launcher** (optional) – copied from `~/.zen-proxy/zen-claude`; lets you start the proxy without editing `~/.claude/settings.json`.
 
-## Quick Start
-
 ## Problem
 
 Claude Code only speaks Anthropic. OpenCode Zen only speaks OpenAI Chat Completions. Without a proxy you're forced to choose: either use Claude Code's native models (which may be rate-limited or unavailable) or use the OpenAI API (which costs money and has its own limits).
