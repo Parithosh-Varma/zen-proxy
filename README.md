@@ -1,5 +1,7 @@
 # zen-proxy
 
+[![Free](https://img.shields.io/badge/status-free-green.svg)](https://github.com/Parithosh-Varma/zen-proxy)
+
 A local Anthropic ↔ OpenAI-compatible translation proxy. Lets Claude Code speak the Anthropic Messages API while forwarding to [OpenCode Zen](https://opencode.ai/zen/v1) models — so you can use Zen's free (or paid) models directly from Claude Code.
 
 ## Problem
