@@ -2,7 +2,11 @@
 
 [![Free Claude Code](https://img.shields.io/badge/Free%20Claude%20Code-green.svg)](https://github.com/Parithosh-Varma/zen-proxy)
 
-A local Anthropic ↔ OpenAI-compatible translation proxy. Lets Claude Code speak the Anthropic Messages API while forwarding to [OpenCode Zen](https://opencode.ai/zen/v1) models — so you can use Zen's free (or paid) models directly from Claude Code.
+zen-proxy is a local translation proxy that bridges Claude Code's Anthropic Messages API with OpenCode Zen's OpenAI‑compatible Chat Completions endpoint (https://opencode.ai/zen/v1). It forwards requests so you can use Zen's free model tier — `hy3-free`, `deepseek-v4-flash-free`, `nemotron-3-ultra-free`, and others — directly from Claude Code, with full tool use, reasoning blocks, and streaming support.
+
+No API key is required for the free tier (`ZEN_KEY` defaults to `"public"`). Each request gets its own session‑aware quota bucket, so your existing opencode sessions continue to work uninterrupted.
+
+## Quick Start
 
 ## Problem
 
