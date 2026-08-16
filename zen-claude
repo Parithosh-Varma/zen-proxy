@@ -1,0 +1,10 @@
+#!/bin/sh
+# Launcher: runs Claude Code through the zen proxy
+export ANTHROPIC_BASE_URL="http://127.0.0.1:${ZEN_PORT:-8083}"
+export ANTHROPIC_AUTH_TOKEN="zen"
+export ANTHROPIC_MODEL="${ZEN_MODEL:-hy3-free}"
+export ANTHROPIC_SMALL_FAST_MODEL="${ZEN_MODEL:-hy3-free}"
+export CLAUDE_CODE_MAX_CONTEXT_TOKENS="${ZEN_CONTEXT:-256000}"
+export CLAUDE_CODE_DISABLE_UNKNOWN_MODEL_WINDOW_ENFORCEMENT="1"
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+exec claude "$@"
