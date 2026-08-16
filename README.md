@@ -8,6 +8,12 @@ zen-proxy is a local translation proxy that bridges Claude Code's Anthropic Mess
 
 No API key is required for the free tier (`ZEN_KEY` defaults to `"public"`). Each request gets its own session‑aware quota bucket, so your existing opencode sessions continue to work uninterrupted.
 
+## Prerequisites
+
+- **Claude Code** (v2.1.233 or newer) – the `claude` binary must be on your `$PATH`.
+- **Node.js** – 18+ required to run `proxy.js`. (Tested on Node 20.)
+- **zen-claude launcher** (optional) – copied from `~/.zen-proxy/zen-claude`; lets you start the proxy without editing `~/.claude/settings.json`.
+
 ## Quick Start
 
 ## Problem
