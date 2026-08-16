@@ -2,6 +2,23 @@
 
 [![Free Claude Code](https://img.shields.io/badge/Free%20Claude%20Code-green.svg)](https://github.com/Parithosh-Varma/zen-proxy)
 
+
+# TLDR
+
+I have made an AI proxy that routes opencode's responses to claude code, i feel that claude code has a better format and is one of the OG's. For this system you dont need an API key and othere opencode sessions are uninterrupted, btw you do not need to install opencode to route the repsones.
+
+# Pipeline
+Claude Code
+  POST /v1/messages
+     └─► Proxy (proxy.js)
+          ├─ translate Anthropic → OpenAI
+          ├─ add x-opencode-session header
+          └─► POST /v1/chat/completions ──► OpenCode Zen
+                └─► per‑session quota check
+                      └─► model completion
+                            └─► translated back
+                                   └─► Anthropian response
+                                          └─► Claude Code UI
 # Free Claude Code
 
 zen-proxy is a local translation proxy that bridges Claude Code's Anthropic Messages API with OpenCode Zen's OpenAI‑compatible Chat Completions endpoint (https://opencode.ai/zen/v1). It forwards requests so you can use Zen's free model tier — `hy3-free`, `deepseek-v4-flash-free`, `nemotron-3-ultra-free`, and others — directly from Claude Code, with full tool use, reasoning blocks, and streaming support.
