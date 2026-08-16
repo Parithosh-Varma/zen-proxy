@@ -1,69 +1,68 @@
 # zen-proxy
 
-Local Anthropic → OpenAI-compatible translation proxy that lets Claude Code use OpenCode Zen models (`https://opencode.ai/zen/v1`) through `ANTHROPIC_BASE_URL`.
+A local Anthropic ↔ OpenAI-compatible translation proxy. Lets Claude Code speak the Anthropic Messages API while forwarding to [OpenCode Zen](https://opencode.ai/zen/v1) models — so you can use Zen's free (or paid) models directly from Claude Code.
 
-## Why
+## Problem
 
-Claude Code speaks the Anthropic Messages API. OpenCode Zen speaks the OpenAI Chat Completions API. This proxy translates between the two, so Claude Code can use Zen's free models (e.g. `hy3-free`, `deepseek-v4-flash-free`) or any paid Zen model.
+Claude Code only speaks Anthropic. OpenCode Zen only speaks OpenAI Chat Completions. Without a proxy you're forced to choose: either use Claude Code's native models (which may be rate-limited or unavailable) or use the OpenAI API (which costs money and has its own limits).
 
-## Requirements
+This proxy bridges the gap. You get Zen's free model tier (`hy3-free`, `deepseek-v4-flash-free`, `nemotron-3-ultra-free`, etc.) inside Claude Code, with full tool use, reasoning, and streaming support.
 
-- Node.js 18+
-- Claude Code (`claude` on PATH)
-
-## Install
+## Quick Start
 
 ```sh
+# 1. Install
 mkdir -p ~/.zen-proxy
 cp proxy.js zen-claude ~/.zen-proxy/
 chmod +x ~/.zen-proxy/zen-claude
-```
 
-## Usage
+# 2. Start the proxy (default port 8083, model hy3-free)
+MODEL=hy3-free PORT=8083 ZEN_KEY=public node ~/.zen-proxy/proxy.js &
+# or with a different port:
+# PORT=9099 MODEL=deepseek-v4-flash-free ZEN_KEY=public node ~/.zen-proxy/proxy.js &
 
-Start the proxy:
-
-```sh
-MODEL=hy3-free PORT=9099 ZEN_KEY=public node ~/.zen-proxy/proxy.js
-```
-
-Then either:
-
-1. Use the launcher (no global changes):
-
-```sh
-ZEN_MODEL=hy3-free ZEN_PORT=9099 ~/.zen-proxy/zen-claude
-```
-
-2. Or point Claude Code at it globally via `~/.claude/settings.json`:
-
-```json
+# 3. Point Claude Code at it (global settings.json):
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://127.0.0.1:9099",
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:8083",
     "ANTHROPIC_AUTH_TOKEN": "zen",
     "ANTHROPIC_MODEL": "hy3-free",
     "ANTHROPIC_SMALL_FAST_MODEL": "hy3-free"
   }
 }
+
+# 4. Ask Claude:
+#   /p "Reply with exactly: ZEN-OK"
 ```
 
-## Environment variables
+Or use the lightweight launcher (no global config changes):
+
+```sh
+ZEN_MODEL=hy3-free ZEN_PORT=8083 ~/.zen-proxy/zen-claude -p "Reply with exactly: ZEN-OK"
+```
+
+## Why this matters
+
+- **Free model access** — Zen's free tier (`hy3-free`, etc.) works inside Claude Code
+- **No API key needed** — `ZEN_KEY` defaults to `"public"`; set your own key only if you have a paid Zen account
+- **Session-aware** — each proxy request gets its own quota bucket (the gateway rate-limits per-session, not per-IP). Your existing opencode sessions keep working.
+- **Model agnostic** — swap `MODEL` to use any Zen-available model: `hy3-free`, `deepseek-v4-flash-free`, `nemotron-3-ultra-free`, etc.
+- **Tool use + reasoning** — full Anthropic tool use and `reasoning_content` / `thinking` blocks are translated and forwarded
+
+## Env vars
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `MODEL` | `hy3-free` | Zen model to forward requests to |
-| `PORT` | `8083` | Local listen port |
-| `ZEN_KEY` | `public` | Zen API key (free tier uses `public`) |
+| `MODEL` | `hy3-free` | Zen model id to forward to |
+| `PORT` | `8083` | Listen port |
+| `ZEN_KEY` | `public` | Zen API key (`public` for free tier) |
 
 ## Notes
 
-- Zen rate limits are **per session** (`x-opencode-session` header). The proxy generates a fresh session id per request, so free-tier quota is not shared with your opencode sessions.
-- The free tier quota is per-model — when a model returns `429 FreeUsageLimitError`, switch to another model (e.g. `hy3-free`, `nemotron-3-ultra-free`, `deepseek-v4-flash-free`).
+- Zen rate limits are **per session**. The proxy generates a fresh session id per request, so free-tier quota does not conflict with your opencode sessions. If you get `429 FreeUsageLimitError`, switch to another model.
+- The proxy adds `x-opencode-session`, `x-opencode-request`, `x-opencode-client`, and `User-Agent` headers to each upstream request — these are what give each request its own quota bucket.
+- The `zen-claude` launcher sets `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, and `ANTHROPIC_MODEL` for you; no manual `~/.claude/settings.json` edit needed for quick tests.
 
-## Endpoints
+## License
 
-- `POST /v1/messages` — Anthropic Messages API → forwarded to Zen Chat Completions
-- `POST /v1/messages/count_tokens` — token counting stub
-- `GET /v1/models` — upstream model list
-- `GET /health` — health check
+MIT
